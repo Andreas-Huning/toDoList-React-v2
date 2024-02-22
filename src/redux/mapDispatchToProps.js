@@ -9,7 +9,7 @@ const mapDispatchToProps = (dispatch) => {
             })
         },
         loadToDoFromLocalStorage: (ToDoListe)=>{
-            console.log("loadToDoFromLocalStorage",ToDoListe);
+            // console.log("loadToDoFromLocalStorage",ToDoListe);
             dispatch({
                 type: LOAD,
                 payload: ToDoListe

@@ -43,7 +43,7 @@ function Main(props) {
     // in das WebStorage speichern
     useEffect(()=>{
         let toDoListJSON = JSON.stringify(props.toDoList)
-        console.log("WebStorage speichern",toDoListJSON);
+        // console.log("WebStorage speichern",toDoListJSON);
         localStorage.setItem("ToDoListe", toDoListJSON);
         
     },[props.toDoList])
