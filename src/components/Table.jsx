@@ -1,8 +1,10 @@
 import React from 'react';
 import TableRow from './TableRow';
+import { connect } from 'react-redux';
+import mapStateToProps from '../redux/mapStateToProps';
 
 function Table(props) {
-    // console.log(props.toDoList);
+    // console.log("Table",props.toDoList);
     return (
         <table>
             <thead>
@@ -17,7 +19,7 @@ function Table(props) {
                 <>
                     {
                         props.toDoList.map((ele,index)=>{
-                            return <TableRow listItem={ele} index={index} delToDo={props.delToDo} editToDo={props.editToDo}/>
+                            return <TableRow editToDo={props.editToDo} listItem={ele} index={index}/>
                         })                            
                     }
                 </>
@@ -26,4 +28,4 @@ function Table(props) {
     );
 }
 
-export default Table;
+export default connect(mapStateToProps) (Table);

@@ -1,67 +1,56 @@
 import React,{useState, useEffect} from 'react';
 import Table from './Table';
+import { connect } from 'react-redux';
+import mapStateToProps from '../redux/mapStateToProps';
+import mapDispatchToProps from '../redux/mapDispatchToProps';
 
 function Main(props) {
 
     const [toDoInput, setToDoInput] = useState("")
     const [toDoList, setToDoList] = useState([])
 
+    function addToDo(e){
+        e.preventDefault()
+        // console.log(toDoInput);
+        props.addToDo(toDoInput)
+        setToDoInput("")
+    }
+
     function handleInput(e){
         setToDoInput(e.target.value)
         // console.log(e.target.value);
-    }
-
-    function handleSubmit(e){
-        e.preventDefault()
-        // console.log(e.target.todo.value);
-        setToDoList((current)=>{
-            return [...current,e.target.todo.value]
-        })
-        setToDoInput("")
-    }
-    function deltoDo(item){
-        // console.log("Eintrag löschen");
-        // console.log(item);
-        setToDoList((current)=>{
-            return current.filter((ele,index)=>{
-                return index != item
-            })
-        })
-        setToDoInput("")        
     }
 
     function clearInput(){
         setToDoInput("") 
     }
 
-    function editToDo(item){
-        // console.log("Eintrag bearbeiten");
-        // console.log(item);
-        setToDoInput(toDoList[item])
-        setToDoList((current)=>{
-            return current.filter((ele,index)=>{
-                return index != item
-            })
-        })
+    function editToDo(id){
+        // console.log("Eintrag bearbeiten",id);
+        setToDoInput(props.toDoList[id])
+        props.deltoDoItem(id)
     }
-    useEffect(()=>{
-        let toDoListNew = localStorage.getItem("toDoList");  
-        if(toDoListNew != null){    
-          let toDoListArr = JSON.parse(toDoListNew);
-          setToDoList(toDoListArr)
-        }  
-    },[])
 
+    // aus dem WebStorage laden
+    useEffect(() => {      
+        const ToDo_STRING = localStorage.getItem("ToDoListe")
+        if (ToDo_STRING != null) {
+          const ToDo_ARRAY = JSON.parse(ToDo_STRING)
+          props.loadToDoFromLocalStorage(ToDo_ARRAY)
+        }
+      }, [])
+
+    // in das WebStorage speichern
     useEffect(()=>{
-        let toDoListJSON = JSON.stringify(toDoList)
-        // console.log(toDoListJSON);
-        localStorage.setItem("toDoList", toDoListJSON);
+        let toDoListJSON = JSON.stringify(props.toDoList)
+        console.log("WebStorage speichern",toDoListJSON);
+        localStorage.setItem("ToDoListe", toDoListJSON);
         
-    },[toDoList])
+    },[props.toDoList])
 
     return (
 
-        <div className='container-main' onSubmit={(e)=>{handleSubmit(e)}}>
+        <div className='container-main' onSubmit={(e)=>{addToDo(e)}}>
             <h1>To Do Liste</h1>
             <div className="todo-container">
                 <h2>Aufgabe hinzufügen</h2>
@@ -71,9 +60,9 @@ function Main(props) {
                     <button onClick={clearInput} disabled={toDoInput==""}>Löschen</button>
                 </form>
             </div> 
-            {toDoList.length >0 &&
+            {props.toDoList.length >0 &&
                 <div className='table-container'>
-                <Table toDoList={toDoList} delToDo={deltoDo} editToDo={editToDo}/> 
+                <Table editToDo={editToDo}/> 
             </div>  
             }                  
             
@@ -83,4 +72,4 @@ function Main(props) {
     );
 }
 
-export default Main;
+export default connect(mapStateToProps, mapDispatchToProps) (Main);
